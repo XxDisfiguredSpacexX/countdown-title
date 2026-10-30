@@ -1,0 +1,28 @@
+name: Update video title
+
+on:
+  schedule:
+    - cron: "7-59/10 * * * *"  # every 10 minutes from :07 (top of the hour is GitHub's busiest, runs get delayed)
+    - cron: "30 3 1 * *"  # monthly keepalive: GitHub disables schedules in public repos after 60 days without a commit
+  workflow_dispatch:  # adds a "Run workflow" button for testing
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 update_title.py
+        env:
+          VIDEO_ID: ${{ vars.VIDEO_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+      - if: github.event.schedule == '30 3 1 * *'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "Keepalive"
+          git push
