@@ -2,9 +2,9 @@ name: Update video title
 
 on:
   schedule:
-    - cron: "7-59/10 * * * *"  # every 10 minutes from :07 (top of the hour is GitHub's busiest, runs get delayed)
+    - cron: "37 * * * *"  # hourly backup; cron-job.org triggers the real every-10-minute runs (GitHub drops most scheduled runs)
     - cron: "30 3 1 * *"  # monthly keepalive: GitHub disables schedules in public repos after 60 days without a commit
-  workflow_dispatch:  # adds a "Run workflow" button for testing
+  workflow_dispatch:  # cron-job.org calls this every 10 minutes; also the "Run workflow" button
 
 permissions:
   contents: write
